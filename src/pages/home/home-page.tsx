@@ -42,7 +42,8 @@ export const Home = () => {
           <Button
             sx={{
               color: "black",
-              backgroundColor: "lightred",
+              backgroundColor: "#FF204E",
+              marginLeft: "10px",
               ":hover": { backgroundColor: "red" },
             }}
           >
