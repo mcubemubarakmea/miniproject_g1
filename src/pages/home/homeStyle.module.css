@@ -1,0 +1,32 @@
+.home {
+    background-color: whitesmoke;
+}
+.box1{
+    background-color: lightblue;
+    border-radius: 10px;
+    padding: 25px;
+    width: 600px;
+}
+.box1>h3{
+    text-align: left;
+    font-size: large;
+    margin-bottom: 5px;
+}
+.box1>p{
+    font-size: small;
+    margin-bottom: 10px;
+}
+.box1>h4{
+    font-size: medium;
+}
+.btnwrapper{
+    display: flex;
+    justify-content: flex-end;
+}
+.profile{
+    display: flex;
+    align-items: center;
+}
+.profile>h3{
+    margin-left: 10px;
+}
