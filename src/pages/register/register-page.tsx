@@ -27,7 +27,7 @@ import { useNavigate } from "react-router-dom";
 
 const USER_TYPE = {
   CUSTOMER: 1,
-  LABOUR: 2,
+  CONTRACTOR: 2,
 };
 const defaultTheme = createTheme();
 
@@ -123,7 +123,7 @@ export const RegisterPage = () => {
                 onChange={handleTypeChange}
               >
                 <MenuItem value={1}>Customer</MenuItem>
-                <MenuItem value={2}>Labour</MenuItem>
+                <MenuItem value={2}>Contractor</MenuItem>
               </Select>
             </FormControl>
             <TextField
