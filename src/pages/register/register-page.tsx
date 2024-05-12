@@ -21,8 +21,7 @@ import {
 import { FormEvent, useState } from "react";
 import { EMAIL, FULL_NAME } from "../../utils/regex";
 import { createAccount } from "../../firebase/firebaseConfig";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../store/store";
+import { useAppDispatch } from "../../store/store";
 import { login } from "../../store/userSlice";
 import { useNavigate } from "react-router-dom";
 
@@ -33,7 +32,7 @@ const USER_TYPE = {
 const defaultTheme = createTheme();
 
 export const RegisterPage = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [userType, setUserType] = useState(USER_TYPE.CUSTOMER);
   const [email, setEmail] = useState("");

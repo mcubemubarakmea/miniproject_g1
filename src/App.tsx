@@ -1,25 +1,24 @@
-import { Route, Routes } from 'react-router-dom'
-import './App.css'
-import { AuthLayout } from './layouts/auth-layout'
-import { PrimaryLayout } from './layouts/primary-layout'
-import { Home } from './pages/home/home-page'
-import { Login } from './pages/login/login-page'
-import { RegisterPage } from './pages/register/register-page'
-import { useEffect } from 'react'
-import { onAuthStateChanged } from 'firebase/auth'
-import { auth } from './firebase/firebaseConfig'
-import { useDispatch } from 'react-redux'
-import { fetchUserInfo, login, logout } from './store/userSlice'
-import { ProtectedRoutes } from './utils/protected-route'
+import { Route, Routes } from "react-router-dom";
+import "./App.css";
+import { AuthLayout } from "./layouts/auth-layout";
+import { PrimaryLayout } from "./layouts/primary-layout";
+import { Home } from "./pages/home/home-page";
+import { Login } from "./pages/login/login-page";
+import { RegisterPage } from "./pages/register/register-page";
+import { useEffect } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase/firebaseConfig";
+import { fetchUserInfo, login, logout } from "./store/userSlice";
+import { ProtectedRoutes } from "./utils/protected-route";
+import { useAppDispatch } from "./store/store";
 
 function App() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
       if (user) {
-        dispatch(login(user));
-        dispatch(fetchUserInfo(user.uid));
+        dispatch(fetchUserInfo({ uid: user.uid, email: user.email || "" }));
       } else {
         dispatch(logout());
       }
@@ -33,7 +32,7 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<PrimaryLayout />}>
-          <Route element={<ProtectedRoutes />} >
+          <Route element={<ProtectedRoutes />}>
             <Route index element={<Home />} />
           </Route>
           {/* <Route path="friends" element={protect(Friends)} /> */}
@@ -47,7 +46,7 @@ function App() {
         <Route path="*" element={<p>page not found</p>} />
       </Routes>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

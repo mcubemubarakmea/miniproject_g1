@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Rootstate } from "./store";
 import { User } from "../utils/types";
 import { doc, getDoc } from "firebase/firestore";
@@ -26,7 +26,7 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    login: (state, action) => {
+    login: (state, action:PayloadAction<User>) => {
       state.user = action.payload;
     },
     logout: (state,) => {
@@ -41,7 +41,7 @@ export const userSlice = createSlice({
         state.status = "loading";
       })
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .addCase(fetchUserInfo.fulfilled, (state, action: any) => {
+      .addCase(fetchUserInfo.fulfilled, (state, action: PayloadAction<User>) => {
         state.status = "successfull";
         state.user = action.payload;
       })
@@ -53,10 +53,11 @@ export const userSlice = createSlice({
 
 export const fetchUserInfo = createAsyncThunk(
   "user/fetchUserInfo",
-  async (uid: any) => {
-    const docRef = doc(db, "users", uid);
+  async (args:{uid: string, email: string}) => {
+    const docRef = doc(db, "userdetails", args.uid);
     const response = await getDoc(docRef);
-    return { ...response.data() };
+    const userdetails =  { ...response.data(), email: args.email, id: args.uid } as User;
+    return userdetails;
   }
 );
 
