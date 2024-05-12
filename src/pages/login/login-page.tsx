@@ -122,9 +122,12 @@ export const Login = () => {
             <Grid container>
               <Grid item xs></Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <div
+                  onClick={() => navigate("/auth/register")}
+                  style={{ cursor: "pointer" }}
+                >
                   {"Don't have an account? Sign Up"}
-                </Link>
+                </div>
               </Grid>
             </Grid>
           </Box>

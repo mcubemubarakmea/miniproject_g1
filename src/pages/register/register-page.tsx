@@ -134,6 +134,7 @@ export const RegisterPage = () => {
               label="Name"
               type="name"
               id="name"
+              autoFocus
               value={name}
               onChange={(e) => setName(e.target.value)}
               // autoComplete="current-name"
@@ -146,7 +147,6 @@ export const RegisterPage = () => {
               label="Email Address"
               name="email"
               autoComplete="email"
-              autoFocus
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -181,9 +181,12 @@ export const RegisterPage = () => {
                 </Link> */}
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
-                  {"Have an account? Login"}
-                </Link>
+                <div
+                  onClick={() => navigate("/auth/login")}
+                  style={{ cursor: "pointer" }}
+                >
+                  {"Don't have an account? Sign Up"}
+                </div>
               </Grid>
             </Grid>
           </Box>
