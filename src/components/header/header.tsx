@@ -2,6 +2,7 @@ import { Avatar, Button } from "@mui/material";
 import styles from "./style.module.css";
 import { useAppDispatch, useAppSelector } from "../../store/store";
 import { logout, selectUser, selectUserApiStatus } from "../../store/userSlice";
+import AnoProfileImg from "../../images/ano_profile.png";
 
 export const Header = () => {
   const dispatch = useAppDispatch();
@@ -20,7 +21,7 @@ export const Header = () => {
       <Button onClick={handleLogout}>logout</Button>
       {userApiStatus === "successfull" && user && (
         <div className={styles.profile}>
-          <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+          <Avatar alt="Remy Sharp" src={AnoProfileImg} />
           <h3>{user.name}</h3>
         </div>
       )}
