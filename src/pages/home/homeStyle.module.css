@@ -39,3 +39,8 @@
 .homecntr>h3{
     margin-bottom: 10px;
 }
+.contracterchange{
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+}
