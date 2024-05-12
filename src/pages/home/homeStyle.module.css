@@ -23,13 +23,6 @@
     display: flex;
     justify-content: flex-end;
 }
-.profile{
-    display: flex;
-    align-items: center;
-}
-.profile>h3{
-    margin-left: 10px;
-}
 .homecntr{
     background-color: lightblue;
     border-radius: 10px;

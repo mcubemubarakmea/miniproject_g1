@@ -1,4 +1,4 @@
-import { Avatar, Button, TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import styles from "./homeStyle.module.css";
 // import { Post } from "./components/post/post";
 // import { AddPost } from "./components/add-post/add-post";
@@ -21,10 +21,6 @@ export const Home = () => {
             Request
           </Button>
         </div>
-      </div>
-      <div className={styles.profile}>
-        <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-        <h3>Name</h3>
       </div>
       <div className={styles.homecntr}>
         <h3>Name</h3>
