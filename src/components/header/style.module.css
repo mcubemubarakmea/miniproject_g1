@@ -9,6 +9,7 @@
 .profile {
   display: flex;
   align-items: center;
+  margin-right: 3%;
 }
 .profile > h3 {
   margin-left: 10px;
