@@ -4,3 +4,11 @@ export interface User {
   email: string;
   type: number;
 }
+
+export interface ContractorPost {
+  id: string;
+  title: string;
+  phone: string;
+  description: string;
+  labourCount: number;
+}
