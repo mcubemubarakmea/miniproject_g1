@@ -1,10 +1,12 @@
 import { Avatar, Button } from "@mui/material";
 import styles from "./style.module.css";
-import { useAppDispatch } from "../../store/store";
-import { logout } from "../../store/userSlice";
+import { useAppDispatch, useAppSelector } from "../../store/store";
+import { logout, selectUser, selectUserApiStatus } from "../../store/userSlice";
 
 export const Header = () => {
   const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
+  const userApiStatus = useAppSelector(selectUserApiStatus);
 
   function handleLogout() {
     dispatch(logout());
@@ -16,10 +18,12 @@ export const Header = () => {
         <h1>Labor Link Connect</h1>
       </div>
       <Button onClick={handleLogout}>logout</Button>
-      <div className={styles.profile}>
-        <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-        <h3>Name</h3>
-      </div>
+      {userApiStatus === "successfull" && user && (
+        <div className={styles.profile}>
+          <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+          <h3>{user.name}</h3>
+        </div>
+      )}
     </header>
   );
 };
