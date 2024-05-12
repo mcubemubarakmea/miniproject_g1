@@ -1,7 +1,9 @@
 import { initializeApp } from "firebase/app";
 import {
+  collection,
   doc,
   getDoc,
+  getDocs,
   getFirestore,
   setDoc,
   updateDoc,
@@ -100,4 +102,14 @@ export async function getContractorPost(uid: string) {
   }
   const UserPost = { ...postDetails, id: response.id } as ContractorPost;
   return UserPost;
+}
+
+export async function getAllContractorPost() {
+  const collectionRef = collection(db, "contractorposts");
+  const snapShot = await getDocs(collectionRef);
+  const documents = snapShot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as ContractorPost[];
+  return documents;
 }
