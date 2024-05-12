@@ -1,39 +1,43 @@
 .home {
-    background-color: whitesmoke;
+  background-color: whitesmoke;
 }
-.box1{
-    background-color: lightblue;
-    border-radius: 10px;
-    padding: 25px;
-    width: 600px;
+.box1 {
+  background-color: lightblue;
+  border-radius: 10px;
+  padding: 25px;
+  width: 600px;
 }
-.box1>h3{
-    text-align: left;
-    font-size: large;
-    margin-bottom: 5px;
+.box1 > h3 {
+  text-align: left;
+  font-size: large;
+  margin-bottom: 5px;
 }
-.box1>p{
-    font-size: small;
-    margin-bottom: 10px;
+.box1 > p {
+  font-size: small;
+  margin-bottom: 10px;
 }
-.box1>h4{
-    font-size: medium;
+.box1 > h4 {
+  font-size: medium;
 }
-.btnwrapper{
-    display: flex;
-    justify-content: flex-end;
+.btnwrapper {
+  display: flex;
+  justify-content: flex-end;
 }
-.homecntr{
-    background-color: lightblue;
-    border-radius: 10px;
-    padding: 25px;
-    width: 600px;
+.homecntr {
+  background-color: lightblue;
+  border-radius: 10px;
+  padding: 25px;
+  width: 600px;
+  margin-bottom: 30px;
 }
-.homecntr>h3{
-    margin-bottom: 10px;
+.homecntr > h3 {
+  margin-bottom: 10px;
 }
-.contracterchange{
-    display: flex;
-    flex-direction: column;
-    width: 500px;
+.contracterchange {
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+}
+.contracterchange > h2 {
+  margin-bottom: 5px;
 }

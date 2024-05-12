@@ -31,8 +31,13 @@ export const Home = () => {
               </Button>
             </div>
           </div>
+        </>
+      )}
+
+      {user?.type === USER_TYPE.CONTRACTOR && (
+        <>
           <div className={styles.homecntr}>
-            <h3>Name</h3>
+            <h3>Customer Name</h3>
             <p>Details</p>
             <div className={styles.btnwrapper}>
               <Button
@@ -57,11 +62,12 @@ export const Home = () => {
             </div>
           </div>
           <div className={styles.contracterchange}>
+            <h2>Enter your details</h2>
             <TextField
               sx={{ marginLeft: "10px" }}
               margin="normal"
-              label="Full Name"
-              name="fullname"
+              label="Title"
+              name="title"
             />
             <TextField
               sx={{ marginLeft: "10px" }}
@@ -81,13 +87,15 @@ export const Home = () => {
               label="Details of Workers"
               name="details"
             />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Submit Details
+            </Button>
           </div>
-        </>
-      )}
-
-      {user?.type === USER_TYPE.CONTRACTOR && (
-        <>
-          <p>contractorr</p>
         </>
       )}
     </div>
