@@ -1,25 +1,26 @@
-import { Route, Routes } from 'react-router-dom'
-import './App.css'
-import { AuthLayout } from './layouts/auth-layout'
-import { PrimaryLayout } from './layouts/primary-layout'
-import { Home } from './pages/home/home-page'
-import { Login } from './pages/login/login-page'
-import { RegisterPage } from './pages/register/register-page'
-import { useEffect } from 'react'
-import { onAuthStateChanged } from 'firebase/auth'
-import { auth } from './firebase/firebaseConfig'
-import { useDispatch } from 'react-redux'
-import { fetchUserInfo, login, logout } from './store/userSlice'
-import { ProtectedRoutes } from './utils/protected-route'
+import { Route, Routes } from "react-router-dom";
+import "./App.css";
+import { AuthLayout } from "./layouts/auth-layout";
+import { PrimaryLayout } from "./layouts/primary-layout";
+import { Home } from "./pages/home/home-page";
+import { Login } from "./pages/login/login-page";
+import { RegisterPage } from "./pages/register/register-page";
+import { useEffect } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase/firebaseConfig";
+import { fetchUserInfo, logout, selectUserApiStatus } from "./store/userSlice";
+import { ProtectedRoutes } from "./utils/protected-route";
+import { useAppDispatch, useAppSelector } from "./store/store";
+import { CircularProgress } from "@mui/material";
 
 function App() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+  const userApiStatus = useAppSelector(selectUserApiStatus);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
       if (user) {
-        dispatch(login(user));
-        dispatch(fetchUserInfo(user.uid));
+        dispatch(fetchUserInfo({ uid: user.uid, email: user.email || "" }));
       } else {
         dispatch(logout());
       }
@@ -31,23 +32,34 @@ function App() {
 
   return (
     <>
-      <Routes>
-        <Route path="/" element={<PrimaryLayout />}>
-          <Route element={<ProtectedRoutes />} >
-            <Route index element={<Home />} />
+      {userApiStatus === "loading" && (
+        <div>
+          <CircularProgress />
+        </div>
+      )}
+
+      {(userApiStatus === "successfull" || userApiStatus === "idle") && (
+        <Routes>
+          <Route path="/" element={<PrimaryLayout />}>
+            <Route element={<ProtectedRoutes />}>
+              <Route index element={<Home />} />
+            </Route>
           </Route>
-          {/* <Route path="friends" element={protect(Friends)} /> */}
-          {/* <Route path="chat" element={protect(Chat)} /> */}
-          {/* <Route path="notifications" element={protect(Notifications)} /> */}
-        </Route>
-        <Route path="/auth" element={<AuthLayout />}>
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<RegisterPage />} />
-        </Route>
-        <Route path="*" element={<p>page not found</p>} />
-      </Routes>
+          <Route path="/auth" element={<AuthLayout />}>
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<RegisterPage />} />
+          </Route>
+          <Route path="*" element={<p>page not found</p>} />
+        </Routes>
+      )}
+
+      {userApiStatus === "failed" && (
+        <div>
+          <p>fetch user failed.</p>
+        </div>
+      )}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
