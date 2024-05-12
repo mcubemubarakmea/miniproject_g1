@@ -1,12 +1,15 @@
 import { initializeApp } from "firebase/app";
 import {
+  addDoc,
   collection,
   doc,
   getDoc,
   getDocs,
   getFirestore,
+  query,
   setDoc,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import {
@@ -112,4 +115,58 @@ export async function getAllContractorPost() {
     ...doc.data(),
   })) as ContractorPost[];
   return documents;
+}
+
+export const REQUEST_STATUS = {
+  PENDING: 1,
+  ACCEPTED: 2,
+  REJECTED: 3,
+};
+
+export async function createRequest(uid: string, postId: string) {
+  await addDoc(collection(db, "requests"), {
+    senderId: uid,
+    receiverId: postId,
+    status: REQUEST_STATUS.PENDING,
+  });
+}
+
+type RequestStatus = 1 | 2 | 3;
+export async function updateRequestStatus(id: string, status: RequestStatus) {
+  const docRef = doc(db, "requests", id);
+  await updateDoc(docRef, { status });
+}
+
+interface RequestType {
+  id: string;
+  senderId: string;
+  receiverId: string;
+  status: 1 | 2 | 3;
+}
+export async function getReceivedRequests(uid: string) {
+  const receiverQuery = query(
+    collection(db, "requests"),
+    where("receiverId", "==", uid)
+  );
+  const querySnapshot = await getDocs(receiverQuery);
+  const requests = querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as RequestType[];
+
+  return requests;
+}
+
+export async function getSendedrequests(uid: string) {
+  const senderQuery = query(
+    collection(db, "requests"),
+    where("senderId", "==", uid)
+  );
+  const querySnapshot = await getDocs(senderQuery);
+  const requests = querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as RequestType[];
+
+  return requests;
 }
