@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { User } from "../utils/types";
 
 const firebaseConfig = {
@@ -17,6 +17,10 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 export const auth = getAuth(app);
+
+export function firebaseSignout () {
+  signOut(auth);
+}
 
 
 export async function createAccount(email: string, password: string, type: number, name: string) {

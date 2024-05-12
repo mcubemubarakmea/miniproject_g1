@@ -2,7 +2,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Rootstate } from "./store";
 import { User } from "../utils/types";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase/firebaseConfig";
+import { db, firebaseSignout } from "../firebase/firebaseConfig";
 
 interface InitialState {
   status: "loading" | "successfull" | "failed" | "idle";
@@ -29,6 +29,7 @@ export const userSlice = createSlice({
     logout: (state,) => {
       state.user = null;
       state.status = "idle";
+      firebaseSignout();
     },
   },
   extraReducers: (builder) => {
