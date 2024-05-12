@@ -3,10 +3,6 @@ import { Rootstate } from "./store";
 import { User } from "../utils/types";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
-// PayloadAction
-// import type { Rootstate } from "configs/store";
-// import { ApiService } from "services/api-service";
-// import { User } from "utils/types";
 
 interface InitialState {
   status: "loading" | "successfull" | "failed" | "idle";
@@ -28,6 +24,7 @@ export const userSlice = createSlice({
   reducers: {
     login: (state, action:PayloadAction<User>) => {
       state.user = action.payload;
+      state.status = 'successfull';
     },
     logout: (state,) => {
       state.user = null;
@@ -36,11 +33,9 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       .addCase(fetchUserInfo.pending, (state) => {
         state.status = "loading";
       })
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .addCase(fetchUserInfo.fulfilled, (state, action: PayloadAction<User>) => {
         state.status = "successfull";
         state.user = action.payload;
