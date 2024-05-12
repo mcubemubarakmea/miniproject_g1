@@ -61,7 +61,7 @@ export const RegisterPage = () => {
     } else if (password.length < 6) {
       setSnackBarDetails({
         open: true,
-        message: "Password must be a minimum of 8 characters.",
+        message: "Password must be a minimum of 6 characters.",
       });
       return;
     }

@@ -1,10 +1,7 @@
-import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-// import FormControlLabel from '@mui/material/FormControlLabel';
-// import Checkbox from '@mui/material/Checkbox';
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -12,28 +9,58 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useState } from "react";
+import { Alert, Snackbar } from "@mui/material";
+import { EMAIL } from "../../utils/regex";
+import { login as firebaseLogin } from "../../firebase/firebaseConfig";
+import { login } from "../../store/userSlice";
+import { useNavigate } from "react-router-dom";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-// function Copyright(props: any) {
-//   return (
-//     <Typography variant="body2" color="text.secondary" align="center" {...props}>
-//       {'Copyright © '}
-//       <Link color="inherit" href="https://mui.com/">
-//         Your Website
-//       </Link>{' '}
-//       {new Date().getFullYear()}
-//       {'.'}
-//     </Typography>
-//   );
-// }
-
-// TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 export const Login = () => {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [snackbarDetails, setSnackBarDetails] = useState({
+    open: false,
+    message: "",
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // console.log(event.target.password?.value, 'etarg');
+    if (!EMAIL.test(email)) {
+      setSnackBarDetails({ open: true, message: "Please enter a valid email" });
+      return;
+    } else if (password.length < 6) {
+      setSnackBarDetails({
+        open: true,
+        message: "Password must be a minimum of 8 characters.",
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const user = await firebaseLogin(email, password);
+      login(user);
+      navigate("/");
+    } catch (error: any) {
+      const errCode = error.code;
+      console.log(errCode, "err");
+
+      if (errCode === "auth/invalid-credential") {
+        setSnackBarDetails({ open: true, message: "Invalid password" });
+      } else {
+        setSnackBarDetails({
+          open: true,
+          message: "Something went wrong, please try again later",
+        });
+      }
+    }
+    setLoading(false);
   };
 
   return (
@@ -69,6 +96,8 @@ export const Login = () => {
               name="email"
               autoComplete="email"
               autoFocus
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <TextField
               margin="normal"
@@ -79,11 +108,9 @@ export const Login = () => {
               type="password"
               id="password"
               autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
-            {/* <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            /> */}
             <Button
               type="submit"
               fullWidth
@@ -93,11 +120,7 @@ export const Login = () => {
               Sign In
             </Button>
             <Grid container>
-              <Grid item xs>
-                {/* <Link href="#" variant="body2">
-                  Forgot password?
-                </Link> */}
-              </Grid>
+              <Grid item xs></Grid>
               <Grid item>
                 <Link href="#" variant="body2">
                   {"Don't have an account? Sign Up"}
@@ -106,7 +129,14 @@ export const Login = () => {
             </Grid>
           </Box>
         </Box>
-        {/* <Copyright sx={{ mt: 8, mb: 4 }} /> */}
+        <Snackbar
+          open={snackbarDetails.open}
+          autoHideDuration={3000}
+          onClose={() => setSnackBarDetails({ open: false, message: "" })}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        >
+          <Alert severity="warning">{snackbarDetails.message}</Alert>
+        </Snackbar>
       </Container>
     </ThemeProvider>
   );
