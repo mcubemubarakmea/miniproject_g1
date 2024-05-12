@@ -33,7 +33,7 @@ function App() {
   return (
     <>
       {userApiStatus === "loading" && (
-        <div>
+        <div className="loaderWrap">
           <CircularProgress />
         </div>
       )}
