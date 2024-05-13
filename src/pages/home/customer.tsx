@@ -1,4 +1,4 @@
-import { Button, CircularProgress } from "@mui/material";
+import { Button, Chip, CircularProgress } from "@mui/material";
 import styles from "./customerStyle.module.css";
 import { useEffect, useState } from "react";
 import { ContractorPost, RequestType } from "../../utils/types";
@@ -50,6 +50,17 @@ export const Customer = () => {
     } catch (error) {}
   }
 
+  function renderDescriptionChips(description: string) {
+    const splitArr = description.split(",");
+    return (
+      <>
+        {splitArr.map((item, i) => (
+          <Chip key={i} label={item} variant="outlined" />
+        ))}
+      </>
+    );
+  }
+
   useEffect(() => {
     if (user) {
       (async () => {
@@ -83,7 +94,9 @@ export const Customer = () => {
             style={{ marginBottom: "10px" }}
           >
             <h3>{item.title}</h3>
-            <h4>{item.description}</h4>
+            <div className={styles.chips}>
+              {renderDescriptionChips(item.description)}
+            </div>
             <p>Labours: {item.labourCount}</p>
             {item.requestStatus === REQUEST_STATUS.ACCEPTED ? (
               <p>Contact: {item.phone}</p>
