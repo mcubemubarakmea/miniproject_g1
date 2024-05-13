@@ -11,7 +11,6 @@ import { auth } from "./firebase/firebaseConfig";
 import { fetchUserInfo, logout, selectUserApiStatus } from "./store/userSlice";
 import { ProtectedRoutes } from "./utils/protected-route";
 import { useAppDispatch, useAppSelector } from "./store/store";
-import { CircularProgress } from "@mui/material";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -34,7 +33,10 @@ function App() {
     <>
       {userApiStatus === "loading" && (
         <div className="loaderWrap">
-          <CircularProgress />
+          <div className="company">
+            <h1>Labor Link Connect</h1>
+          </div>
+          <div className="loader"></div>
         </div>
       )}
 

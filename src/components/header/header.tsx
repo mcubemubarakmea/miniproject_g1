@@ -15,12 +15,12 @@ export const Header = () => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
-    handleLogout();
     setAnchorEl(null);
   };
 
   function handleLogout() {
     dispatch(logout());
+    handleClose();
   }
 
   return (
@@ -43,7 +43,7 @@ export const Header = () => {
               "aria-labelledby": "basic-button",
             }}
           >
-            <MenuItem sx={{ color: "red" }} onClick={handleClose}>
+            <MenuItem sx={{ color: "red" }} onClick={handleLogout}>
               Logout
             </MenuItem>
           </Menu>
