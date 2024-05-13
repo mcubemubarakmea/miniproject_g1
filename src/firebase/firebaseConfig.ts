@@ -18,7 +18,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { ContractorPost, User } from "../utils/types";
+import { ContractorPost, RequestType, User } from "../utils/types";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCvpeV9ZbkPe32TTx-UZKB1zu6Gbjpr2Ws",
@@ -123,11 +123,16 @@ export const REQUEST_STATUS = {
   REJECTED: 3,
 };
 
-export async function createRequest(uid: string, postId: string) {
+export async function createRequest(
+  uid: string,
+  postId: string,
+  senderName: string
+) {
   await addDoc(collection(db, "requests"), {
     senderId: uid,
     receiverId: postId,
     status: REQUEST_STATUS.PENDING,
+    senderName,
   });
 }
 
@@ -137,12 +142,6 @@ export async function updateRequestStatus(id: string, status: RequestStatus) {
   await updateDoc(docRef, { status });
 }
 
-interface RequestType {
-  id: string;
-  senderId: string;
-  receiverId: string;
-  status: 1 | 2 | 3;
-}
 export async function getReceivedRequests(uid: string) {
   const receiverQuery = query(
     collection(db, "requests"),

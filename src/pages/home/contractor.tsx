@@ -3,11 +3,14 @@ import styles from "./contractorStyle.module.css";
 import { FormEvent, useEffect, useState } from "react";
 import { FULL_NAME, JOB_DESCRIPION, PHONE_NUMBER } from "../../utils/regex";
 import {
+  REQUEST_STATUS,
   createContratorPost,
   getContractorPost,
+  getReceivedRequests,
   updateContractorPost,
+  updateRequestStatus,
 } from "../../firebase/firebaseConfig";
-import { ContractorPost } from "../../utils/types";
+import { ContractorPost, RequestType } from "../../utils/types";
 import { useAppSelector } from "../../store/store";
 import { selectUser } from "../../store/userSlice";
 
@@ -44,6 +47,7 @@ export const Contractor = () => {
   );
   const [updateContratorDetailsApiStatus, setUpdateContractorDetailsApiStatus] =
     useState(API_STATUS.IDLE);
+  const [receiverRequests, setReceivedRequests] = useState<RequestType[]>([]);
 
   async function handleContractorDetailsUpdate(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -126,16 +130,48 @@ export const Contractor = () => {
     }
   }
 
+  async function handleRequestStatusChange(
+    status: 1 | 2 | 3,
+    requestId: string
+  ) {
+    try {
+      if (status === REQUEST_STATUS.ACCEPTED) {
+        await updateRequestStatus(requestId, REQUEST_STATUS.ACCEPTED);
+        const updatedRequests = receiverRequests.map((item) => {
+          if (item.id === requestId) {
+            item.status = 2;
+          }
+          return item;
+        });
+        setReceivedRequests(updatedRequests);
+      } else if (status === REQUEST_STATUS.REJECTED) {
+        await updateRequestStatus(requestId, REQUEST_STATUS.REJECTED);
+        const updatedRequests = receiverRequests.map((item) => {
+          if (item.id === requestId) {
+            item.status = 3;
+          }
+          return item;
+        });
+        setReceivedRequests(updatedRequests);
+      }
+    } catch (error) {}
+  }
+
   useEffect(() => {
     if (user) {
       (async () => {
         try {
-          const res = await getContractorPost(user.id);
-          setCurrentUserPost(res);
-          setTitle(res.title);
-          setPhonenumber(res.phone);
-          setDescription(res.description);
-          setLabourCount(res.labourCount);
+          const [post, requests] = await Promise.all([
+            getContractorPost(user.id),
+            getReceivedRequests(user.id),
+          ]);
+
+          setReceivedRequests(requests);
+          setCurrentUserPost(post);
+          setTitle(post.title);
+          setPhonenumber(post.phone);
+          setDescription(post.description);
+          setLabourCount(post.labourCount);
           setCurrentUserPostApiStatus(API_STATUS.SUCCESSFUL);
         } catch (error: any) {
           console.log(error, "currusererr");
@@ -201,31 +237,41 @@ export const Contractor = () => {
           </Button>
         </form>
       </div>
-      <div className={styles.homecntr}>
-        <h3>Customer Name</h3>
-        <p>Details</p>
-        <div className={styles.btnwrapper}>
-          <Button
-            sx={{
-              color: "black",
-              backgroundColor: "lightgreen",
-              ":hover": { backgroundColor: "green" },
-            }}
-          >
-            Accept
-          </Button>
-          <Button
-            sx={{
-              color: "black",
-              backgroundColor: "#FF204E",
-              marginLeft: "10px",
-              ":hover": { backgroundColor: "red" },
-            }}
-          >
-            Deny
-          </Button>
+      {receiverRequests.map((item) => (
+        <div key={item.id} className={styles.homecntr}>
+          <h3>{item.senderName}</h3>
+          <div className={styles.btnwrapper}>
+            {item.status !== REQUEST_STATUS.REJECTED && (
+              <Button
+                sx={{
+                  color: "black",
+                  backgroundColor: "lightgreen",
+                  ":hover": { backgroundColor: "green" },
+                }}
+                onClick={() => handleRequestStatusChange(2, item.id)}
+              >
+                {item.status === REQUEST_STATUS.ACCEPTED
+                  ? "Accepted"
+                  : "Accept"}
+              </Button>
+            )}
+
+            {item.status !== REQUEST_STATUS.ACCEPTED && (
+              <Button
+                sx={{
+                  color: "black",
+                  backgroundColor: "#FF204E",
+                  marginLeft: "10px",
+                  ":hover": { backgroundColor: "red" },
+                }}
+                onClick={() => handleRequestStatusChange(3, item.id)}
+              >
+                {item.status === REQUEST_STATUS.REJECTED ? "Denied" : "Deny"}
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
+      ))}
       <Snackbar
         open={snackbarDetails.open}
         autoHideDuration={3000}

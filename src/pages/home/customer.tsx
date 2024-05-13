@@ -1,8 +1,15 @@
 import { Button, CircularProgress } from "@mui/material";
 import styles from "./customerStyle.module.css";
 import { useEffect, useState } from "react";
-import { ContractorPost } from "../../utils/types";
-import { getAllContractorPost } from "../../firebase/firebaseConfig";
+import { ContractorPost, RequestType } from "../../utils/types";
+import {
+  REQUEST_STATUS,
+  createRequest,
+  getAllContractorPost,
+  getSendedrequests,
+} from "../../firebase/firebaseConfig";
+import { useAppSelector } from "../../store/store";
+import { selectUser } from "../../store/userSlice";
 
 const API_STATUS = {
   IDLE: 1,
@@ -11,21 +18,55 @@ const API_STATUS = {
   SUCCESS: 4,
 };
 
+interface ContractorPostWithRequestStatus extends ContractorPost {
+  requestStatus: 1 | 2 | 3 | undefined;
+}
+
 export const Customer = () => {
-  const [allPost, setAllPost] = useState<ContractorPost[]>([]);
+  const user = useAppSelector(selectUser);
+  const [allPost, setAllPost] = useState<ContractorPostWithRequestStatus[]>([]);
   const [allPostApiStatus, setAllPostApiStatus] = useState(API_STATUS.LOADING);
 
+  function addRequestStatus(posts: ContractorPost[], requests: RequestType[]) {
+    const updatedPosts = posts.map((item) => {
+      const currPostReq = requests.find((itm) => item.id === itm.receiverId);
+      const newPost = { ...item, requestStatus: currPostReq?.status };
+      return newPost;
+    });
+    return updatedPosts;
+  }
+
+  async function handleRequestSend(postId: string) {
+    if (!user) return;
+    try {
+      await createRequest(user.id, postId, user.name);
+      const updatedPosts = allPost.map((item) => {
+        if (item.id === postId) {
+          item.requestStatus = 1;
+        }
+        return item;
+      });
+      setAllPost(updatedPosts);
+    } catch (error) {}
+  }
+
   useEffect(() => {
-    (async () => {
-      try {
-        const res = await getAllContractorPost();
-        setAllPost(res);
-        setAllPostApiStatus(API_STATUS.SUCCESS);
-      } catch (error) {
-        setAllPostApiStatus(API_STATUS.FAILED);
-      }
-    })();
-  }, []);
+    if (user) {
+      (async () => {
+        try {
+          const [posts, requests] = await Promise.all([
+            getAllContractorPost(),
+            getSendedrequests(user.id),
+          ]);
+          const statusUpdatedPosts = addRequestStatus(posts, requests);
+          setAllPost(statusUpdatedPosts);
+          setAllPostApiStatus(API_STATUS.SUCCESS);
+        } catch (error) {
+          setAllPostApiStatus(API_STATUS.FAILED);
+        }
+      })();
+    }
+  }, [user]);
   return (
     <>
       {allPostApiStatus === API_STATUS.LOADING && (
@@ -44,6 +85,9 @@ export const Customer = () => {
             <h3>{item.title}</h3>
             <h4>{item.description}</h4>
             <p>Labours: {item.labourCount}</p>
+            {item.requestStatus === REQUEST_STATUS.ACCEPTED && (
+              <p>tel: {item.phone}</p>
+            )}
             <div className={styles.btnwrapper}>
               <Button
                 sx={{
@@ -51,8 +95,16 @@ export const Customer = () => {
                   backgroundColor: "#48cae4",
                   ":hover": { backgroundColor: "#00b4d8" },
                 }}
+                onClick={() => {
+                  if (!item.requestStatus) {
+                    handleRequestSend(item.id);
+                  }
+                }}
               >
-                Request
+                {item.requestStatus === REQUEST_STATUS.PENDING && "Pending"}
+                {item.requestStatus === REQUEST_STATUS.ACCEPTED && "Accepted"}
+                {item.requestStatus === REQUEST_STATUS.REJECTED && "Rejected"}
+                {!item.requestStatus && "Request"}
               </Button>
             </div>
           </div>
