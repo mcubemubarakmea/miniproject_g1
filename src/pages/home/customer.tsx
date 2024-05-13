@@ -85,8 +85,10 @@ export const Customer = () => {
             <h3>{item.title}</h3>
             <h4>{item.description}</h4>
             <p>Labours: {item.labourCount}</p>
-            {item.requestStatus === REQUEST_STATUS.ACCEPTED && (
-              <p>tel: {item.phone}</p>
+            {item.requestStatus === REQUEST_STATUS.ACCEPTED ? (
+              <p>Contact: {item.phone}</p>
+            ) : (
+              <p>Contact: + ## #### ### ###</p>
             )}
             <div className={styles.btnwrapper}>
               <Button

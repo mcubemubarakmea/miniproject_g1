@@ -12,6 +12,7 @@
 .box1 > p {
   font-size: small;
   margin-bottom: 10px;
+  margin-top: 10px;
 }
 .box1 > h4 {
   font-size: medium;
