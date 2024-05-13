@@ -54,7 +54,7 @@ function App() {
       )}
 
       {userApiStatus === "failed" && (
-        <div>
+        <div className="loaderWrap">
           <p>fetch user failed.</p>
         </div>
       )}
